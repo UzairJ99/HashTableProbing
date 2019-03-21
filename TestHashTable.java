@@ -1,45 +1,52 @@
 package si4Lab4;
 
-public class TestHashTable {
+public class TestHashTable 
+{
 
 	public static void main(String[] args) 
 	{
-		//testing the size of the hash table as given in the program description
-		HashTableQuad table1 = new HashTableQuad(5, 0.5);
-		System.out.println("Table size: " + table1.getSize().toString());
-		table1.insert(1);
-		table1.insert(2);
-		table1.insert(34);
-		table1.insert(67);
-		table1.insert(8);
-		table1.insert(20);
-		table1.insert(32); //after this point the table is rehashed
-		table1.insert(45);
-		table1.insert(22);
-		table1.insert(47);
-		table1.printKeysAndIndexes();
-		System.out.println("Table size: " +  table1.getSize().toString()); //resized with the rehash
-		
-		
-		HashTableLin table2 = new HashTableLin(5, 0.5);
-		System.out.println("Table size: " + table2.getSize().toString());
-		table2.insert(10);
-		table2.insert(2);
-		table2.insert(0);
-		table2.insert(1);
-		table2.insert(8);
-		table2.insert(20);
-		table2.insert(32); //after this point the table is rehashed
-		table2.insert(45);
-		table2.insert(22);
-		table2.insert(47);
-		table2.insert(46);
-		table2.insert(32);
-		table2.insert(23);
-		table2.printKeysAndIndexes();
-		System.out.println("Table size: " +  table2.getSize().toString()); //resized with the rehash
-		double sn = (double)(table2.getProbes())/(double)(table2.getNumOfKeys());
-		System.out.println(sn);
+		//testing average probes count Sn
+		System.out.println(getQuadSn(100,0.2));
+		System.out.println(getLinSn(100,0.2));		
+	}
+	
+	public static double getQuadSn(int tests, double load)
+	{
+		double sn = 0;
+		//perform multiple tests
+		for(int j = 0; j < tests; j++)
+		{
+			//create a hash table of 100000 items
+			HashTableQuad table1 = new HashTableQuad(100000, load);
+			for (int i = 0; i < 100000; i++)
+			{
+				//randomly generate the keys
+				int random = (int)(Math.random() * 5000000 + 1);
+				table1.insert(random);
+			}
+			//count the total probes and average it
+			sn += (double)(table1.getProbes())/(double)(table1.getNumOfKeys());
+		}
+		//get the average number of probes of each table over all the tests
+		sn/=tests;
+		return sn;
+	}
+	
+	public static double getLinSn(int tests, double load)
+	{
+		double sn = 0;
+		for(int j = 0; j < tests; j++)
+		{
+			HashTableLin table1 = new HashTableLin(100000, load);
+			for (int i = 0; i < 100000; i++)
+			{
+				int random = (int)(Math.random() * 5000000 + 1);
+				table1.insert(random);
+			}
+			sn += (double)(table1.getProbes())/(double)(table1.getNumOfKeys());
+		}
+		sn/=tests;
+		return sn;
 	}
 
 }
